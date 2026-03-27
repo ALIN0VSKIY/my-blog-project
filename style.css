@@ -605,3 +605,259 @@ body {
         gap: 15px;
     }
 }
+
+/* ========================================
+   ADMIN SIDEBAR (боковая панель)
+   ======================================== */
+.admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px 15px;
+    background-color: var(--color-dark);
+    border-radius: 0 12px 12px 0;
+    z-index: 200;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.admin-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background-color: transparent;
+    border: 2px solid var(--color-light-gray);
+    border-radius: 8px;
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.admin-btn:hover {
+    background-color: var(--color-orange);
+    border-color: var(--color-orange);
+    transform: translateX(5px);
+}
+
+.btn-icon {
+    font-size: 18px;
+}
+
+.btn-text {
+    display: none;
+    /* Скрыть текст на маленьких экранах */
+}
+
+/* ========================================
+   POST FORM (форма добавления статьи)
+   ======================================== */
+.post-form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(50, 55, 71, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.post-form-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.post-form {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.post-form-overlay.active .post-form {
+    transform: translateY(0);
+}
+
+.post-form h3 {
+    font-size: var(--h4-size);
+    margin-bottom: 20px;
+    color: var(--color-dark);
+}
+
+.post-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.post-form input,
+.post-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--color-light-gray);
+    border-radius: 8px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.post-form input:focus,
+.post-form textarea:focus {
+    outline: none;
+    border-color: var(--color-orange);
+    box-shadow: 0 0 0 3px var(--color-light-orange);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.btn-submit {
+    padding: 12px 30px;
+    background-color: var(--color-green);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    background-color: var(--color-dark);
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    padding: 12px 30px;
+    background-color: var(--color-light-gray);
+    color: var(--color-dark);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-cancel:hover {
+    background-color: var(--color-gray);
+    color: var(--color-white);
+}
+
+/* ========================================
+   STATS DIALOG (модальное окно статистики)
+   ======================================== */
+.stats-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    z-index: 400;
+    width: 90%;
+    max-width: 400px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.stats-dialog[open] {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dialog-header h3 {
+    font-size: var(--h4-size);
+    color: var(--color-dark);
+}
+
+.dialog-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--color-gray);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dialog-close:hover {
+    color: var(--color-orange);
+}
+
+.dialog-content p {
+    margin-bottom: 10px;
+    color: var(--color-text-light);
+}
+
+.dialog-content strong {
+    color: var(--color-dark);
+}
+
+/* Overlay для dialog */
+.stats-dialog::backdrop {
+    background-color: rgba(50, 55, 71, 0.8);
+}
+
+/* ========================================
+   АДАПТИВНОСТЬ ДЛЯ НОВЫХ ЭЛЕМЕНТОВ
+   ======================================== */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        left: 50%;
+        bottom: 20px;
+        top: auto;
+        transform: translateX(-50%);
+        flex-direction: row;
+        border-radius: 12px;
+    }
+
+    .admin-btn .btn-text {
+        display: inline;
+        /* Показать текст на мобильных */
+    }
+
+    .post-form {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+    }
+}
