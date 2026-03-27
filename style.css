@@ -861,3 +861,50 @@ body {
         width: 100%;
     }
 }
+
+/* ========================================
+   DELETE BUTTON (кнопка удаления статьи)
+   ======================================== */
+.article-card {
+    position: relative;
+    /* Для позиционирования кнопки удаления */
+}
+
+.delete-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--color-orange);
+    color: var(--color-white);
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.article-card:hover .delete-btn {
+    opacity: 1;
+    visibility: visible;
+}
+
+.delete-btn:hover {
+    background-color: var(--color-dark);
+    transform: scale(1.1);
+}
+
+/* Анимация удаления */
+.article-card.removing {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
