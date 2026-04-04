@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const article = document.createElement('article');
         const now = new Date();
 
-        // Получаем локальную дату
+        // Получаем локальную дату (не UTC!)
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
@@ -91,17 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         article.className = 'article-card';
         article.innerHTML = `
-        <button class="delete-btn" title="Удалить статью">&times;</button>
-        <h2>${escapeHtml(title)}</h2>
-        <p class="article-date"><strong>Опубликовано:</strong> <time datetime="${dateStr}">${formatDate(now)}</time></p>
-        <p>${escapeHtml(content)}</p>
-    `;
+            <button class="delete-btn" title="Удалить статью">&times;</button>
+            <h2>${escapeHtml(title)}</h2>
+            <p class="article-date"><strong>Опубликовано:</strong> <time datetime="${dateStr}">${formatDate(now)}</time></p>
+            <p>${escapeHtml(content)}</p>
+        `;
 
         // Вставляем новую статью первой в сетку
         blogGrid.insertBefore(article, blogGrid.firstChild);
-
-        // Добавляем обработчик удаления для новой карточки
-        article.querySelector('.delete-btn').addEventListener('click', handleDelete);
 
         // Обновляем статистику
         updateStatsCount();
@@ -181,9 +178,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Удаление статей (для существующих карточек)
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', handleDelete);
+    // ДЕЛЕГИРОВАНИЕ СОБЫТИЙ: один обработчик на весь контейнер
+    blogGrid?.addEventListener('click', (e) => {
+        // Проверяем, кликнули ли на кнопку удаления
+        if (e.target.classList.contains('delete-btn')) {
+            handleDelete(e);
+        }
     });
 
     // Закрытие формы по клику вне неё
