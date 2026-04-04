@@ -30,7 +30,11 @@
         <h1 class="page-title">Статьи</h1>
 
         <div class="blog-grid" id="blog-grid">
-            <!-- Статьи будут добавляться динамически через JS -->
+            <!-- Лоадер (показывается при загрузке) -->
+            <div class="loader-container" id="loader-container">
+                <div class="loader"></div>
+                <p class="loader-text">Загрузка статей...</p>
+            </div>
 
             <!-- Состояние "нет статей" (скрыто по умолчанию) -->
             <div class="empty-state" id="empty-state" hidden>
