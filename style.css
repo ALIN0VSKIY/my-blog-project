@@ -908,3 +908,106 @@ body {
     transform: scale(0.9);
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
+/* ========================================
+   EMPTY STATE (состояние "нет статей")
+   ======================================== */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--color-gray);
+}
+
+.empty-state-text {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.btn-create-first {
+    padding: 12px 30px;
+    background-color: var(--color-green);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-create-first:hover {
+    background-color: var(--color-dark);
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   ОПТИМИЗАЦИЯ КАРТОЧЕК СТАТЕЙ
+   ======================================== */
+
+/* Ограничение ширины и высоты карточки */
+.article-card {
+    max-width: 100%;
+    min-width: 0;
+    /* Позволяет сжиматься в grid */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Перенос длинных слов и слов без пробелов */
+.article-card h2 {
+    word-break: break-word;
+    /* Перенос длинных слов */
+    overflow-wrap: break-word;
+    hyphens: auto;
+    /* Автоматическая расстановка переносов */
+    margin-bottom: 15px;
+}
+
+/* Ограничение высоты текста статьи */
+.article-card p {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Ограничение количества строк (опционально) */
+.article-card p:not(.article-date) {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    /* Максимум 6 строк */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Многоточие в конце */
+}
+
+/* Дата не ограничивается */
+.article-card .article-date {
+    flex-shrink: 0;
+    /* Не сжимается */
+    margin-bottom: 15px;
+}
+
+/* Кнопка удаления не влияет на layout */
+.delete-btn {
+    flex-shrink: 0;
+}
+
+/* Для featured карточки (первой) */
+.article-card:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* Адаптивность: на мобильных все карточки одинаковые */
+@media (max-width: 800px) {
+    .article-card:first-child {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .article-card p:not(.article-date) {
+        -webkit-line-clamp: 4;
+        /* Меньше строк на мобильных */
+    }
+}
