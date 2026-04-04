@@ -1,5 +1,5 @@
 // ========================================
-// ЗАДАНИЕ 5: Интерактивность блога
+// ЗАДАНИЕ 6: Интерактивность блога
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancelForm = document.getElementById('btn-cancel-form');
     const statsDialog = document.getElementById('stats-dialog');
     const statsCount = document.getElementById('stats-count');
+    const statsDate = document.getElementById('stats-date');
     const blogGrid = document.querySelector('.blog-grid');
 
     // === ФУНКЦИИ ===
@@ -28,31 +29,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Получить дату последней (самой новой) статьи
+    function getLastArticleDate() {
+        const articles = document.querySelectorAll('.article-card');
+        if (articles.length === 0) {
+            return '—';
+        }
+
+        // Берём первую статью (самую новую)
+        const firstArticle = articles[0];
+        const timeElement = firstArticle.querySelector('time');
+
+        if (timeElement && timeElement.dateTime) {
+            return formatDate(new Date(timeElement.dateTime));
+        }
+
+        return formatDate(new Date());
+    }
+
     // Показать статистику
     function showStats() {
         const articles = document.querySelectorAll('.article-card');
+
+        // Обновляем количество
         if (statsCount) {
             statsCount.textContent = articles.length;
         }
+
+        // Обновляем дату последней статьи
+        if (statsDate) {
+            statsDate.textContent = getLastArticleDate();
+        }
+
         statsDialog.showModal();
     }
 
-    // Добавить новую статью (с mock-данными для задания 5)
-    function addPost() {
+    // Обновить статистику (количество + дата)
+    function updateStatsCount() {
+        const articles = document.querySelectorAll('.article-card');
+
+        if (statsCount) {
+            statsCount.textContent = articles.length;
+        }
+
+        // Обновляем дату автоматически
+        if (statsDate) {
+            statsDate.textContent = getLastArticleDate();
+        }
+    }
+
+    // Добавить новую статью (с данными из формы)
+    function addPost(title, content) {
         const article = document.createElement('article');
         const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
 
-        // Mock-данные (в задании 6 будем читать из формы)
+        // Получаем локальную дату
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
         article.className = 'article-card';
         article.innerHTML = `
-            <h2>Новая статья</h2>
-            <p class="article-date"><strong>Опубликовано:</strong> <time datetime="${dateStr}">${formatDate(now)}</time></p>
-            <p>Это пример новой статьи. В задании 6 данные будут браться из формы.</p>
-        `;
+        <button class="delete-btn" title="Удалить статью">&times;</button>
+        <h2>${escapeHtml(title)}</h2>
+        <p class="article-date"><strong>Опубликовано:</strong> <time datetime="${dateStr}">${formatDate(now)}</time></p>
+        <p>${escapeHtml(content)}</p>
+    `;
 
         // Вставляем новую статью первой в сетку
         blogGrid.insertBefore(article, blogGrid.firstChild);
+
+        // Добавляем обработчик удаления для новой карточки
+        article.querySelector('.delete-btn').addEventListener('click', handleDelete);
+
+        // Обновляем статистику
+        updateStatsCount();
+    }
+
+    // Удалить статью
+    function handleDelete(event) {
+        const card = event.target.closest('.article-card');
+        if (card && confirm('Удалить эту статью?')) {
+            // Добавляем класс для анимации
+            card.classList.add('removing');
+
+            // Ждём завершения анимации и удаляем
+            setTimeout(() => {
+                card.remove();
+                // Обновляем статистику (включая дату!)
+                updateStatsCount();
+            }, 300);
+        }
     }
 
     // Форматирование даты
@@ -64,19 +132,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Экранирование HTML (защита от XSS)
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // === ОБРАБОТЧИКИ СОБЫТИЙ ===
 
-    // Кнопка "Создать статью" - показываем форму
+    // Кнопка "Создать статью"
     btnCreatePost?.addEventListener('click', () => toggleForm(true));
 
-    // Кнопка "Отмена" - скрываем форму
-    btnCancelForm?.addEventListener('click', () => toggleForm(false));
+    // Кнопка "Отмена" - очистка и скрытие формы
+    btnCancelForm?.addEventListener('click', () => {
+        postForm.reset();
+        toggleForm(false);
+    });
 
-    // Отправка формы - добавляем статью (в задании 5 с mock-данными)
+    // Отправка формы - чтение данных и добавление статьи
     postForm?.addEventListener('submit', (e) => {
         e.preventDefault();
-        addPost();  // В задании 6 будем читать данные из формы
-        toggleForm(false);
+
+        // Чтение данных из формы
+        const title = document.getElementById('post-title').value.trim();
+        const content = document.getElementById('post-content').value.trim();
+
+        // Валидация
+        if (title && content) {
+            addPost(title, content);
+            postForm.reset();
+            toggleForm(false);
+        } else {
+            alert('Пожалуйста, заполните все поля!');
+        }
     });
 
     // Кнопка "Статистика"
@@ -90,6 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === statsDialog) {
             statsDialog.close();
         }
+    });
+
+    // Удаление статей (для существующих карточек)
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', handleDelete);
     });
 
     // Закрытие формы по клику вне неё
