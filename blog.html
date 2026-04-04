@@ -31,7 +31,7 @@
 
         <div class="blog-grid">
             <!-- Статья 1 -->
-            <article class="article-card">
+            <article class="article-card featured">
                 <h2>Как создать адаптивный дизайн за 30 минут</h2>
                 <p class="article-date"><strong>Опубликовано:</strong> <time datetime="2026-03-12">12 марта 2026</time>
                 </p>
@@ -90,9 +90,51 @@
                     которые можно использовать прямо сейчас.</p>
             </article>
         </div>
+
+        <!-- Боковая админ-панель -->
+        <aside class="admin-sidebar">
+            <button class="admin-btn" id="btn-create-post" title="Создать статью">
+                <span class="btn-icon">✎</span>
+                <span class="btn-text">Создать статью</span>
+            </button>
+            <button class="admin-btn" id="btn-show-stats" title="Показать статистику">
+                <span class="btn-icon">📊</span>
+                <span class="btn-text">Статистика</span>
+            </button>
+        </aside>
+
+        <!-- Форма добавления статьи (скрыта по умолчанию) -->
+        <div class="post-form-overlay" id="post-form-overlay">
+            <form class="post-form" id="post-form">
+                <h3>Новая статья</h3>
+
+                <label for="post-title">Заголовок</label>
+                <input type="text" id="post-title" name="title" placeholder="Введите заголовок статьи" required>
+
+                <label for="post-content">Текст статьи</label>
+                <textarea id="post-content" name="content" placeholder="Напишите содержание статьи..." rows="5"
+                          required></textarea>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-submit">Добавить</button>
+                    <button type="button" class="btn-cancel" id="btn-cancel-form">Отмена</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Dialog со статистикой -->
+        <dialog class="stats-dialog" id="stats-dialog">
+            <div class="dialog-header">
+                <h3>Статистика блога</h3>
+                <button class="dialog-close" id="btn-close-stats">&times;</button>
+            </div>
+            <div class="dialog-content">
+                <p><strong>Всего статей:</strong> <span id="stats-count">5</span></p>
+                <p><strong>Последнее обновление:</strong> <span id="stats-date">12 марта 2026</span></p>
+            </div>
+        </dialog>
     </main>
 
-    <hr>
     <footer class="footer">
         <div class="container">
             <h2>Контакты</h2>
@@ -101,6 +143,8 @@
         </div>
     </footer>
 
+    <!-- Подключение JavaScript -->
+    <script src="script.js" defer></script>
 </body>
 
 </html>
