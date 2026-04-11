@@ -1,5 +1,5 @@
 // ========================================
-// ЗАДАНИЕ 7: Работа с localStorage
+// ЗАДАНИЕ 8: Асинхронность и лоадер
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,9 +17,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsDate = document.getElementById('stats-date');
     const blogGrid = document.getElementById('blog-grid');
     const emptyState = document.getElementById('empty-state');
+    const loaderContainer = document.getElementById('loader-container'); // Лоадер
 
     // Ключ для localStorage
     const STORAGE_KEY = 'blog_articles';
+
+    // === ФУНКЦИИ УПРАВЛЕНИЯ ЛОАДЕРОМ ===
+
+    // Показать лоадер
+    function showLoader() {
+        if (loaderContainer) {
+            loaderContainer.classList.remove('hidden');
+        }
+    }
+
+    // Скрыть лоадер
+    function hideLoader() {
+        if (loaderContainer) {
+            loaderContainer.classList.add('hidden');
+        }
+    }
+
+    // Заблокировать форму и кнопки
+    function disableForm(disabled) {
+        const submitBtn = postForm.querySelector('.btn-submit');
+        const cancelBtn = postForm.querySelector('.btn-cancel');
+        const inputs = postForm.querySelectorAll('input, textarea');
+
+        if (submitBtn) submitBtn.disabled = disabled;
+        if (cancelBtn) cancelBtn.disabled = disabled;
+
+        inputs.forEach(input => {
+            input.disabled = disabled;
+        });
+
+        // Добавляем класс для визуального эффекта
+        if (disabled) {
+            postForm.classList.add('loading');
+        } else {
+            postForm.classList.remove('loading');
+        }
+    }
+
+    // Имитация асинхронной загрузки (Promise)
+    function simulateAsyncLoad(delay = 1500) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, delay);
+        });
+    }
 
     // === ФУНКЦИИ РАБОТЫ С ДАННЫМИ ===
 
@@ -46,10 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Отрисовать статьи в сетке
-    function renderArticles() {
+    async function renderArticles() {
+        // Показываем лоадер
+        showLoader();
+
+        // Имитируем задержку загрузки (1.5 секунды)
+        await simulateAsyncLoad(1500);
+
         const articles = loadArticles();
 
-        // Удаляем все карточки, кроме empty-state
+        // Удаляем все карточки, кроме empty-state и loader
         const existingCards = blogGrid.querySelectorAll('.article-card');
         existingCards.forEach(card => card.remove());
 
@@ -74,6 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Обновляем статистику
         updateStats(articles);
+
+        // Скрываем лоадер
+        hideLoader();
     }
 
     // Создать HTML-элемент карточки
@@ -93,11 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Добавить новую статью
-    function addPost(title, content) {
+    async function addPost(title, content) {
+        // Блокируем форму
+        disableForm(true);
+
+        // Показываем лоадер (опционально, можно убрать)
+        showLoader();
+
+        // Имитируем задержку сохранения (1 секунда)
+        await simulateAsyncLoad(1000);
+
         const articles = loadArticles();
 
         const newArticle = {
-            id: Date.now().toString(), // Уникальный ID
+            id: Date.now().toString(),
             title: title.trim(),
             content: content.trim(),
             date: getLocalDateString()
@@ -108,7 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
         saveArticles(articles);
 
         // Перерисовываем
-        renderArticles();
+        await renderArticles();
+
+        // Разблокируем форму
+        disableForm(false);
     }
 
     // Удалить статью
@@ -174,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === ОБРАБОТЧИКИ СОБЫТИЙ ===
 
-    // Инициализация: загрузка статей при старте
+    // Инициализация: показываем лоадер и загружаем статьи
     renderArticles();
 
     // Кнопка "Создать статью"
@@ -190,14 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Отправка формы
-    postForm?.addEventListener('submit', (e) => {
+    postForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const title = document.getElementById('post-title').value.trim();
         const content = document.getElementById('post-content').value.trim();
 
         if (title && content) {
-            addPost(title, content);
+            await addPost(title, content);
             postForm.reset();
             toggleForm(false);
         } else {

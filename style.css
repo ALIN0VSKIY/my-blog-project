@@ -974,6 +974,7 @@ body {
 .article-card p:not(.article-date) {
     display: -webkit-box;
     -webkit-line-clamp: 6;
+    line-clamp: 6;
     /* Максимум 6 строк */
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -1008,6 +1009,119 @@ body {
 
     .article-card p:not(.article-date) {
         -webkit-line-clamp: 4;
+        line-clamp: 4;
         /* Меньше строк на мобильных */
+    }
+}
+
+/* ========================================
+   LOADER (индикатор загрузки)
+   ======================================== */
+.loader-container {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px;
+    min-height: 300px;
+}
+
+.loader {
+    width: 60px;
+    height: 60px;
+    border: 6px solid var(--color-light-gray);
+    border-top: 6px solid var(--color-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-text {
+    color: var(--color-gray);
+    font-size: 16px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Скрытие лоадера */
+.loader-container.hidden {
+    display: none;
+}
+
+/* ========================================
+   DISABLED STATE (для формы и кнопок)
+   ======================================== */
+.post-form.loading * {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.btn-submit:disabled,
+.btn-cancel:disabled,
+.admin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Альтернативный лоадер: 3 точки */
+.loader-dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.loader-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--color-green);
+    border-radius: 50%;
+    animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loader-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loader-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loader-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+
+    40% {
+        transform: scale(1);
     }
 }
