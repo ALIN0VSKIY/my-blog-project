@@ -1,5 +1,5 @@
 // ========================================
-// ЗАДАНИЕ 6: Интерактивность блога
+// ЗАДАНИЕ 7: Работа с localStorage
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,14 +11,134 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnShowStats = document.getElementById('btn-show-stats');
     const btnCloseStats = document.getElementById('btn-close-stats');
     const btnCancelForm = document.getElementById('btn-cancel-form');
+    const btnCreateFirst = document.getElementById('btn-create-first');
     const statsDialog = document.getElementById('stats-dialog');
     const statsCount = document.getElementById('stats-count');
     const statsDate = document.getElementById('stats-date');
-    const blogGrid = document.querySelector('.blog-grid');
+    const blogGrid = document.getElementById('blog-grid');
+    const emptyState = document.getElementById('empty-state');
 
-    // === ФУНКЦИИ ===
+    // Ключ для localStorage
+    const STORAGE_KEY = 'blog_articles';
 
-    // Показать/скрыть форму добавления статьи
+    // === ФУНКЦИИ РАБОТЫ С ДАННЫМИ ===
+
+    // Загрузить статьи из localStorage
+    function loadArticles() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+    }
+
+    // Сохранить статьи в localStorage
+    function saveArticles(articles) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
+    }
+
+    // Получить дату последней статьи
+    function getLastArticleDate(articles) {
+        if (articles.length === 0) return '—';
+
+        const firstArticle = articles[0];
+        if (firstArticle.date) {
+            return formatDate(new Date(firstArticle.date));
+        }
+        return formatDate(new Date());
+    }
+
+    // Отрисовать статьи в сетке
+    function renderArticles() {
+        const articles = loadArticles();
+
+        // Удаляем все карточки, кроме empty-state
+        const existingCards = blogGrid.querySelectorAll('.article-card');
+        existingCards.forEach(card => card.remove());
+
+        // Показываем/скрываем пустое состояние
+        if (articles.length === 0) {
+            emptyState.hidden = false;
+        } else {
+            emptyState.hidden = true;
+
+            // Рендерим статьи (первая — самая новая)
+            articles.forEach((article, index) => {
+                const card = createArticleCard(article);
+
+                // Первая статья в массиве — самая новая, вставляем в начало
+                if (index === 0) {
+                    blogGrid.insertBefore(card, emptyState);
+                } else {
+                    blogGrid.appendChild(card);
+                }
+            });
+        }
+
+        // Обновляем статистику
+        updateStats(articles);
+    }
+
+    // Создать HTML-элемент карточки
+    function createArticleCard(article) {
+        const card = document.createElement('article');
+        card.className = 'article-card';
+        card.dataset.id = article.id;
+
+        card.innerHTML = `
+            <button class="delete-btn" title="Удалить статью">&times;</button>
+            <h2>${escapeHtml(article.title)}</h2>
+            <p class="article-date"><strong>Опубликовано:</strong> <time datetime="${article.date}">${formatDate(new Date(article.date))}</time></p>
+            <p>${escapeHtml(article.content)}</p>
+        `;
+
+        return card;
+    }
+
+    // Добавить новую статью
+    function addPost(title, content) {
+        const articles = loadArticles();
+
+        const newArticle = {
+            id: Date.now().toString(), // Уникальный ID
+            title: title.trim(),
+            content: content.trim(),
+            date: getLocalDateString()
+        };
+
+        // Добавляем в начало массива (самая новая — первая)
+        articles.unshift(newArticle);
+        saveArticles(articles);
+
+        // Перерисовываем
+        renderArticles();
+    }
+
+    // Удалить статью
+    function deletePost(id) {
+        let articles = loadArticles();
+        articles = articles.filter(article => article.id !== id);
+        saveArticles(articles);
+        renderArticles();
+    }
+
+    // Получить локальную дату в формате YYYY-MM-DD
+    function getLocalDateString() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Обновить статистику
+    function updateStats(articles) {
+        if (statsCount) {
+            statsCount.textContent = articles.length;
+        }
+        if (statsDate) {
+            statsDate.textContent = getLastArticleDate(articles);
+        }
+    }
+
+    // Показать/скрыть форму
     function toggleForm(show) {
         if (show) {
             postFormOverlay.classList.add('active');
@@ -29,98 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Получить дату последней (самой новой) статьи
-    function getLastArticleDate() {
-        const articles = document.querySelectorAll('.article-card');
-        if (articles.length === 0) {
-            return '—';
-        }
-
-        // Берём первую статью (самую новую)
-        const firstArticle = articles[0];
-        const timeElement = firstArticle.querySelector('time');
-
-        if (timeElement && timeElement.dateTime) {
-            return formatDate(new Date(timeElement.dateTime));
-        }
-
-        return formatDate(new Date());
-    }
-
     // Показать статистику
     function showStats() {
-        const articles = document.querySelectorAll('.article-card');
-
-        // Обновляем количество
-        if (statsCount) {
-            statsCount.textContent = articles.length;
-        }
-
-        // Обновляем дату последней статьи
-        if (statsDate) {
-            statsDate.textContent = getLastArticleDate();
-        }
-
+        const articles = loadArticles();
+        updateStats(articles);
         statsDialog.showModal();
-    }
-
-    // Обновить статистику (количество + дата)
-    function updateStatsCount() {
-        const articles = document.querySelectorAll('.article-card');
-
-        if (statsCount) {
-            statsCount.textContent = articles.length;
-        }
-
-        // Обновляем дату автоматически
-        if (statsDate) {
-            statsDate.textContent = getLastArticleDate();
-        }
-    }
-
-    // Добавить новую статью (с данными из формы)
-    function addPost(title, content) {
-        const article = document.createElement('article');
-        const now = new Date();
-
-        // Получаем локальную дату
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-
-        article.className = 'article-card';
-        article.innerHTML = `
-        <button class="delete-btn" title="Удалить статью">&times;</button>
-        <h2>${escapeHtml(title)}</h2>
-        <p class="article-date"><strong>Опубликовано:</strong> <time datetime="${dateStr}">${formatDate(now)}</time></p>
-        <p>${escapeHtml(content)}</p>
-    `;
-
-        // Вставляем новую статью первой в сетку
-        blogGrid.insertBefore(article, blogGrid.firstChild);
-
-        // Добавляем обработчик удаления для новой карточки
-        article.querySelector('.delete-btn').addEventListener('click', handleDelete);
-
-        // Обновляем статистику
-        updateStatsCount();
-    }
-
-    // Удалить статью
-    function handleDelete(event) {
-        const card = event.target.closest('.article-card');
-        if (card && confirm('Удалить эту статью?')) {
-            // Добавляем класс для анимации
-            card.classList.add('removing');
-
-            // Ждём завершения анимации и удаляем
-            setTimeout(() => {
-                card.remove();
-                // Обновляем статистику (включая дату!)
-                updateStatsCount();
-            }, 300);
-        }
     }
 
     // Форматирование даты
@@ -132,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Экранирование HTML (защита от XSS)
+    // Экранирование HTML
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
@@ -141,24 +174,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === ОБРАБОТЧИКИ СОБЫТИЙ ===
 
+    // Инициализация: загрузка статей при старте
+    renderArticles();
+
     // Кнопка "Создать статью"
     btnCreatePost?.addEventListener('click', () => toggleForm(true));
 
-    // Кнопка "Отмена" - очистка и скрытие формы
+    // Кнопка "Создать первую статью" (из empty-state)
+    btnCreateFirst?.addEventListener('click', () => toggleForm(true));
+
+    // Кнопка "Отмена"
     btnCancelForm?.addEventListener('click', () => {
         postForm.reset();
         toggleForm(false);
     });
 
-    // Отправка формы - чтение данных и добавление статьи
+    // Отправка формы
     postForm?.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // Чтение данных из формы
         const title = document.getElementById('post-title').value.trim();
         const content = document.getElementById('post-content').value.trim();
 
-        // Валидация
         if (title && content) {
             addPost(title, content);
             postForm.reset();
@@ -181,9 +218,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Удаление статей (для существующих карточек)
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', handleDelete);
+    // Делегирование: удаление статьи
+    blogGrid?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+            const card = e.target.closest('.article-card');
+            const id = card?.dataset.id;
+
+            if (id && confirm('Удалить эту статью?')) {
+                card.classList.add('removing');
+                setTimeout(() => {
+                    deletePost(id);
+                }, 300);
+            }
+        }
     });
 
     // Закрытие формы по клику вне неё
