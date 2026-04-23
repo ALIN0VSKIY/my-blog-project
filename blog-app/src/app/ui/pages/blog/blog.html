@@ -1,0 +1,38 @@
+<!-- Заголовок страницы -->
+<h1 class="page-title">Статьи</h1>
+
+<!-- Сетка статей -->
+<div class="blog-grid">
+    @for (article of articles; track article.id) {
+    <app-article-card [article]="article" (delete)="onDeleteArticle($event)">
+    </app-article-card>
+    }
+</div>
+
+<!-- Боковая админ-панель -->
+<aside class="admin-sidebar">
+    <button class="admin-btn" (click)="openForm()" title="Создать статью">
+        <span class="btn-icon">✎</span>
+        <span class="btn-text">Создать статью</span>
+    </button>
+    <button class="admin-btn" (click)="openStats()" title="Показать статистику">
+        <span class="btn-icon">📊</span>
+        <span class="btn-text">Статистика</span>
+    </button>
+</aside>
+
+<!-- Форма добавления статьи (оверлей в родителе, как в оригинале) -->
+@if (showForm) {
+<div class="post-form-overlay active" (click)="onOverlayClick($event)">
+    <app-add-article-form (submit)="onAddArticle($event)" (cancel)="closeForm()" (click)="$event.stopPropagation()">
+    </app-add-article-form>
+</div>
+}
+
+<!-- Диалог статистики -->
+<app-stats-dialog [isOpen]="showStats" [articleCount]="articles.length" [lastDate]="lastArticleDate"
+                  (close)="closeStats()">
+</app-stats-dialog>
+
+<!-- Подсчёт статей -->
+<p>Всего статей: {{ articles.length }}</p>

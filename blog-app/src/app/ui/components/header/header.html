@@ -1,8 +1,9 @@
 <header class="header">
     <nav class="nav">
         <ul class="nav-list">
-            <li><a href="index.html" class="nav-link active">Главная</a></li>
-            <li><a href="blog.html" class="nav-link">Блог</a></li>
+            <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                   class="nav-link">Главная</a></li>
+            <li><a routerLink="/blog" routerLinkActive="active" class="nav-link">Блог</a></li>
         </ul>
     </nav>
 </header>

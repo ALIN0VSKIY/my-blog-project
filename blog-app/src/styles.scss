@@ -90,101 +90,7 @@ body {
 }
 
 /* ========================================
-   АДАПТИВНОСТЬ
-   ======================================== */
-@media (max-width: 1024px) {
-    :root {
-        --h1-size: 42px;
-        --h2-size: 32px;
-        --h3-size: 28px;
-        --h4-size: 22px;
-    }
-
-    .about-section {
-        padding: 50px 0;
-    }
-}
-
-@media (max-width: 768px) {
-    :root {
-        --section-padding: 50px 0;
-    }
-
-    .skills-grid,
-    .articles-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .blog-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    :root {
-        --h1-size: 32px;
-        --h2-size: 26px;
-        --h3-size: 22px;
-        --h4-size: 18px;
-    }
-
-    .container,
-    .main {
-        padding: 0 15px;
-    }
-}
-
-/* ========================================
-   ADMIN SIDEBAR (боковая панель)
-   ======================================== */
-.admin-sidebar {
-    position: fixed;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px 15px;
-    background-color: var(--color-dark);
-    border-radius: 0 12px 12px 0;
-    z-index: 200;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
-}
-
-.admin-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 15px;
-    background-color: transparent;
-    border: 2px solid var(--color-light-gray);
-    border-radius: 8px;
-    color: var(--color-white);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-    white-space: nowrap;
-}
-
-.admin-btn:hover {
-    background-color: var(--color-orange);
-    border-color: var(--color-orange);
-    transform: translateX(5px);
-}
-
-.btn-icon {
-    font-size: 18px;
-}
-
-.btn-text {
-    display: none;
-    /* Скрыть текст на маленьких экранах */
-}
-
-/* ========================================
-   POST FORM (форма добавления статьи)
+   POST FORM OVERLAY (форма добавления статьи) — ГЛОБАЛЬНО!
    ======================================== */
 .post-form-overlay {
     position: fixed;
@@ -293,86 +199,29 @@ body {
 }
 
 /* ========================================
-   STATS DIALOG (модальное окно статистики)
+   АДАПТИВНОСТЬ
    ======================================== */
-.stats-dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--color-white);
-    padding: 30px;
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    z-index: 400;
-    width: 90%;
-    max-width: 400px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+@media (max-width: 1024px) {
+    :root {
+        --h1-size: 42px;
+        --h2-size: 32px;
+        --h3-size: 28px;
+        --h4-size: 22px;
+    }
 }
 
-.stats-dialog[open] {
-    opacity: 1;
-    visibility: visible;
-}
-
-.dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.dialog-header h3 {
-    font-size: var(--h4-size);
-    color: var(--color-dark);
-}
-
-.dialog-close {
-    background: none;
-    border: none;
-    font-size: 28px;
-    color: var(--color-gray);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.dialog-close:hover {
-    color: var(--color-orange);
-}
-
-.dialog-content p {
-    margin-bottom: 10px;
-    color: var(--color-text-light);
-}
-
-.dialog-content strong {
-    color: var(--color-dark);
-}
-
-/* Overlay для dialog */
-.stats-dialog::backdrop {
-    background-color: rgba(50, 55, 71, 0.8);
-}
-
-/* ========================================
-   АДАПТИВНОСТЬ ДЛЯ НОВЫХ ЭЛЕМЕНТОВ
-   ======================================== */
 @media (max-width: 768px) {
-    .admin-sidebar {
-        left: 50%;
-        bottom: 20px;
-        top: auto;
-        transform: translateX(-50%);
-        flex-direction: row;
-        border-radius: 12px;
+    :root {
+        --section-padding: 50px 0;
     }
 
-    .admin-btn .btn-text {
-        display: inline;
-        /* Показать текст на мобильных */
+    .skills-grid,
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .blog-grid {
+        grid-template-columns: 1fr;
     }
 
     .post-form {
@@ -387,5 +236,19 @@ body {
     .btn-submit,
     .btn-cancel {
         width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --h1-size: 32px;
+        --h2-size: 26px;
+        --h3-size: 22px;
+        --h4-size: 18px;
+    }
+
+    .container,
+    .main {
+        padding: 0 15px;
     }
 }
