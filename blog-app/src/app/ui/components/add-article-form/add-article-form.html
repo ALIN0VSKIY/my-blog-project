@@ -1,0 +1,18 @@
+<div class="post-form">
+    <h3>Новая статья</h3>
+
+    <form (ngSubmit)="onSubmit()">
+        <label for="post-title">Заголовок</label>
+        <input type="text" id="post-title" name="title" placeholder="Введите заголовок статьи" [(ngModel)]="title"
+               required autofocus>
+
+        <label for="post-content">Текст статьи</label>
+        <textarea id="post-content" name="content" placeholder="Напишите содержание статьи..." rows="5"
+                  [(ngModel)]="content" required></textarea>
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-submit">Добавить</button>
+            <button type="button" class="btn-cancel" (click)="onCancel()">Отмена</button>
+        </div>
+    </form>
+</div>

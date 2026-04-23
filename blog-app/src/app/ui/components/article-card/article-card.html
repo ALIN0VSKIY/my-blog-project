@@ -1,0 +1,7 @@
+<article class="article-card" [class.featured]="article.featured">
+    <button class="delete-btn" title="Удалить статью" (click)="onDelete()">×</button>
+    <h2 *ngIf="article.featured">{{ article.title }}</h2>
+    <h3 *ngIf="!article.featured">{{ article.title }}</h3>
+    <p class="article-date"><strong>Опубликовано:</strong> {{ article.date | date:'dd MMMM yyyy' }}</p>
+    <p>{{ article.description }}</p>
+</article>

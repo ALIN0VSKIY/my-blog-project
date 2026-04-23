@@ -1,0 +1,12 @@
+<div class="stats-dialog-overlay" [class.active]="isOpen" (click)="onClose()">
+    <div class="stats-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+            <h3>Статистика блога</h3>
+            <button class="dialog-close" (click)="onClose()">&times;</button>
+        </div>
+        <div class="dialog-content">
+            <p><strong>Всего статей:</strong> <span>{{ articleCount }}</span></p>
+            <p><strong>Последнее обновление:</strong> <span>{{ formatDate(lastDate) }}</span></p>
+        </div>
+    </div>
+</div>
